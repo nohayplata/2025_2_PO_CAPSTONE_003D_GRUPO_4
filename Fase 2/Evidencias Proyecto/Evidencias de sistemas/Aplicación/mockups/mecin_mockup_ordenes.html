@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mec-IN - Órdenes de Trabajo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F8FAFC;
+            color: #0A0E27;
+            min-height: 100vh;
+        }
+        
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0A0E27 0%, #151B3B 100%);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #E32726, #C41E22);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .logo-text h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, #0077C8, #004B87);
+            color: white;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: white;
+            padding: 24px 32px;
+            border-bottom: 1px solid #E2E8F0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0A0E27;
+            margin-bottom: 4px;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #64748B;
+            font-weight: 500;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary {
+            background: #F8FAFC;
+            color: #64748B;
+            border: 2px solid #E2E8F0;
+        }
+        
+        .btn-secondary:hover {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0077C8, #004B87);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 119, 200, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 119, 200, 0.4);
+        }
+        
+        /* Filters */
+        .filters-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: #F1F5F9;
+        }
+        
+        .filter-btn.active {
+            background: #0077C8;
+            border-color: #0077C8;
+            color: white;
+        }
+        
+        .search-filter {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-filter input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            background: #F8FAFC;
+        }
+        
+        .search-filter input:focus {
+            outline: none;
+            border-color: #0077C8;
+            background: white;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+        }
+        
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #E2E8F0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        
+        .stat-icon.pending {
+            background: #FEF3C7;
+        }
+        
+        .stat-icon.progress {
+            background: #DBEAFE;
+        }
+        
+        .stat-icon.completed {
+            background: #D1FAE5;
+        }
+        
+        .stat-icon.critical {
+            background: #FEE2E2;
+        }
+        
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0A0E27;
+            margin-bottom: 2px;
+        }
+        
+        .stat-info p {
+            font-size: 12px;
+            color: #64748B;
+            font-weight: 600;
+        }
+        
+        /* Orders Table */
+        .orders-container {
+            background: white;
+            border-radius: 16px;
+            border: 2px solid #E2E8F0;
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 2px solid #F1F5F9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0A0E27;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #F8FAFC;
+        }
+        
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #E2E8F0;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #F1F5F9;
+            transition: background 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: #F8FAFC;
+        }
+        
+        td {
+            padding: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1E293B;
+        }
+        
+        .order-id {
+            font-weight: 700;
+            color: #0077C8;
+            cursor: pointer;
+        }
+        
+        .order-id:hover {
+            text-decoration: underline;
+        }
+        
+        .vehicle-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .vehicle-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #F1F5F9, #E2E8F0);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .vehicle-details strong {
+            display: block;
+            font-weight: 700;
+            color: #0A0E27;
+            margin-bottom: 2px;
+        }
+        
+        .vehicle-details span {
+            font-size: 12px;
+            color: #64748B;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .badge-assigned {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .badge-progress {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+        
+        .badge-completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .badge-critical {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        
+        .badge-high {
+            background: #FED7AA;
+            color: #9A3412;
+        }
+        
+        .badge-medium {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+        
+        .badge-low {
+            background: #F1F5F9;
+            color: #475569;
+        }
+        
+        .assigned-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0077C8, #004B87);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .actions-cell {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .action-btn:hover {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+        }
+        
+        /* Pagination */
+        .pagination {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #F1F5F9;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: #64748B;
+            font-weight: 500;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover {
+            background: #F1F5F9;
+        }
+        
+        .page-btn.active {
+            background: #0077C8;
+            border-color: #0077C8;
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 968px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .filters-bar {
+                flex-direction: column;
+            }
+            
+            .search-filter {
+                min-width: 100%;
+            }
+            
+            .content-area {
+                padding: 20px 16px;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">M</div>
+                <div class="logo-text">
+                    <h1>Mec-IN</h1>
+                </div>
+            </div>
+            
+            <nav>
+                <a href="#" class="nav-item">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <span>🚛</span> Vehículos
+                </a>
+                <a href="#" class="nav-item active">
+                    <span>📋</span> Órdenes de Trabajo
+                </a>
+                <a href="#" class="nav-item">
+                    <span>📦</span> Inventario
+                </a>
+                <a href="#" class="nav-item">
+                    <span>🔑</span> Control de Llaves
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-top">
+                    <div class="header-title">
+                        <h1>Órdenes de Trabajo</h1>
+                        <p>Gestión completa de mantenimientos y reparaciones</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary">
+                            📊 Exportar
+                        </button>
+                        <button class="btn btn-primary">
+                            ➕ Nueva Orden
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <button class="filter-btn active">Todas</button>
+                        <button class="filter-btn">Pendientes</button>
+                        <button class="filter-btn">En Proceso</button>
+                        <button class="filter-btn">Completadas</button>
+                    </div>
+                    <div class="search-filter">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Buscar por OT, patente, vehículo...">
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <!-- Stats -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon pending">⏳</div>
+                        <div class="stat-info">
+                            <h3>8</h3>
+                            <p>Pendientes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon progress">🔧</div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>En Proceso</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon completed">✅</div>
+                        <div class="stat-info">
+                            <h3>156</h3>
+                            <p>Completadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon critical">⚠️</div>
+                        <div class="stat-info">
+                            <h3>3</h3>
+                            <p>Críticas</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orders Table -->
+                <div class="orders-container">
+                    <div class="table-header">
+                        <div class="table-title">Lista de Órdenes de Trabajo</div>
+                        <div class="table-actions">
+                            <button class="filter-btn">⚙️ Filtros</button>
+                            <button class="filter-btn">↕️ Ordenar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>N° ORDEN</th>
+                                    <th>VEHÍCULO</th>
+                                    <th>TIPO</th>
+                                    <th>ESTADO</th>
+                                    <th>PRIORIDAD</th>
+                                    <th>MECÁNICO</th>
+                                    <th>FECHA</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="order-id">OT-2025-0345</span></td>
+                                    <td>
+                                        <div class="vehicle-info">
+                                            <div class="vehicle-icon">🚛</div>
+                                            <div class="vehicle-details">
+                                                <strong>BJFT-45</strong>
+                                                <span>Mercedes Benz Actros</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Preventivo</td>
+                                    <td><span class="badge badge-progress">En Proceso</span></td>
+                                    <td><span class="badge badge-high">Alta</span></td>
+                                    <td>
+                                        <div class="assigned-user">
+                                            <div class="user-avatar">JP</div>
+                                            <span>Juan Pérez</span>
+                                        </div>
+                                    </td>
+                                    <td>03/10/2025</td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Ver detalle">👁️</button>
+                                            <button class="action-btn" title="Editar">✏️</button>
+                                            <button class="action-btn" title="Más opciones">⋮</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><span class="order-id">OT-2025-0344</span></td>
+                                    <td>
+                                        <div class="vehicle-info">
+                                            <div class="vehicle-icon">🚛</div>
+                                            <div class="vehicle-details">
+                                                <strong>CGHY-23</strong>
+                                                <span>Volvo FH16</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Correctivo</td>
+                                    <td><span class="badge badge-critical">Crítica</span></td>
+                                    <td><span class="badge badge-critical">Crítica</span></td>
+                                    <td>
+                                        <div class="assigned-user">
+                                            <div class="user-avatar">MG</div>
+                                            <span>María González</span>
+                                        </div>
+                                    </td>
+                                    <td>03/10/2025</td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn">👁️</button>
+                                            <button class="action-btn">✏️</button>
+                                            <button class="action-btn">⋮</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><span class="order-id">OT-2025-0343</span></td>
+                                    <td>
+                                        <div class="vehicle-info">
+                                            <div class="vehicle-icon">🚛</div>
+                                            <div class="vehicle-details">
+                                                <strong>DWRS-89</strong>
+                                                <span>Scania R500</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Diagnóstico</td>
+                                    <td><span class="badge badge-pending">Pendiente</span></td>
+                                    <td><span class="badge badge-medium">Media</span></td>
+                                    <td>
+                                        <span style="color: #94A3B8; font-size: 13px;">Sin asignar</span>
+                                    </td>
+                                    <td>02/10/2025</td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn">👁️</button>
+                                            <button class="action-btn">✏️</button>
+                                            <button class="action-btn">⋮</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><span class="order-id">OT-2025-0342</span></td>
+                                    <td>
+                                        <div class="vehicle-info">
+                                            <div class="vehicle-icon">🚛</div>
+                                            <div class="vehicle-details">
+                                                <strong>HJKL-12</strong>
+                                                <span>Freightliner Cascadia</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Preventivo</td>
+                                    <td><span class="badge badge-completed">Completada</span></td>
+                                    <td><span class="badge badge-low">Baja</span></td>
+                                    <td>
+                                        <div class="assigned-user">
+                                            <div class="user-avatar">CR</div>
+                                            <span>Carlos Ramírez</span>
+                                        </div>
+                                    </td>
+                                    <td>02/10/2025</td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn">👁️</button>
+                                            <button class="action-btn">✏️</button>
+                                            <button class="action-btn">⋮</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><span class="order-id">OT-2025-0341</span></td>
+                                    <td>
+                                        <div class="vehicle-info">
+                                            <div class="vehicle-icon">🚛</div>
+                                            <div class="vehicle-details">
+                                                <strong>PLMN-56</strong>
+                                                <span>Kenworth T680</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Correctivo</td>
+                                    <td><span class="badge badge-progress">En Proceso</span></td>
+                                    <td><span class="badge badge-high">Alta</span></td>
+                                    <td>
+                                        <div class="assigned-user">
+                                            <div class="user-avatar">JP</div>
+                                            <span>Juan Pérez</span>
+                                        </div>
+                                    </td>
+                                    <td>01/10/2025</td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn">👁️</button>
+                                            <button class="action-btn">✏️</button>
+                                            <button class="action-btn">⋮</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Mostrando 1-5 de 24 órdenes
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="page-btn">←</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">4</button>
+                            <button class="page-btn">5</button>
+                            <button class="page-btn">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

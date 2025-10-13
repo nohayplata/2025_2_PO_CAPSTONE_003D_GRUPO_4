@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mec-IN - Registro de Ingreso</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F8FAFC;
+            color: #0A0E27;
+        }
+        
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar simplificado */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0A0E27 0%, #151B3B 100%);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #E32726, #C41E22);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .logo-text h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-bottom: 24px;
+        }
+        
+        .nav-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .progress-steps {
+            flex: 1;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .step::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 48px;
+            bottom: -24px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .step:last-child::before {
+            display: none;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-number {
+            background: linear-gradient(135deg, #0077C8, #004B87);
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background: #10B981;
+            color: white;
+        }
+        
+        .step-info {
+            padding-top: 8px;
+        }
+        
+        .step-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 4px;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-title,
+        .step.completed .step-title {
+            color: white;
+        }
+        
+        .step-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: white;
+            padding: 24px 32px;
+            border-bottom: 1px solid #E2E8F0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #64748B;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        
+        .breadcrumb a {
+            color: #0077C8;
+            text-decoration: none;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0A0E27;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #64748B;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+        }
+        
+        .form-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            border: 2px solid #E2E8F0;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #F1F5F9;
+        }
+        
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #0077C8, #004B87);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+        
+        .card-title h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0A0E27;
+            margin-bottom: 4px;
+        }
+        
+        .card-title p {
+            font-size: 14px;
+            color: #64748B;
+            font-weight: 500;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .required {
+            color: #E32726;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 14px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #0A0E27;
+            background: #F8FAFC;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #0077C8;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 119, 200, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-hint {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+        
+        /* Photo Upload Section */
+        .photo-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .upload-box {
+            aspect-ratio: 4/3;
+            border: 2px dashed #CBD5E1;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #F8FAFC;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-box:hover {
+            border-color: #0077C8;
+            background: #F0F9FF;
+        }
+        
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .upload-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+            text-align: center;
+            padding: 0 16px;
+        }
+        
+        .upload-subtext {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 4px;
+        }
+        
+        .photo-preview {
+            position: relative;
+            border: 2px solid #E2E8F0;
+            background: #F8FAFC;
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 8px 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .remove-photo {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            background: rgba(239, 68, 68, 0.95);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .remove-photo:hover {
+            background: #DC2626;
+        }
+        
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid #F1F5F9;
+        }
+        
+        .btn {
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary {
+            background: #F8FAFC;
+            color: #64748B;
+            border: 2px solid #E2E8F0;
+        }
+        
+        .btn-secondary:hover {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0077C8, #004B87);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 119, 200, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 119, 200, 0.4);
+        }
+        
+        /* Alert Box */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+            border: 2px solid;
+        }
+        
+        .alert-info {
+            background: #F0F9FF;
+            border-color: #BAE6FD;
+            color: #0369A1;
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .alert-text {
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        /* Responsive */
+        @media (max-width: 968px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-area {
+                padding: 24px 16px;
+            }
+            
+            .form-card {
+                padding: 24px 20px;
+            }
+            
+            .photo-upload-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .header {
+                padding: 20px 16px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .photo-upload-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">M</div>
+                <div class="logo-text">
+                    <h1>Mec-IN</h1>
+                </div>
+            </div>
+            
+            <a href="#" class="nav-back">
+                ← Volver al Dashboard
+            </a>
+            
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-number">✓</div>
+                    <div class="step-info">
+                        <div class="step-title">Datos del Vehículo</div>
+                        <div class="step-desc">Información básica</div>
+                    </div>
+                </div>
+                
+                <div class="step active">
+                    <div class="step-number">2</div>
+                    <div class="step-info">
+                        <div class="step-title">Detalles de Ingreso</div>
+                        <div class="step-desc">En progreso</div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-info">
+                        <div class="step-title">Evidencias</div>
+                        <div class="step-desc">Fotos y documentos</div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-info">
+                        <div class="step-title">Confirmación</div>
+                        <div class="step-desc">Revisión final</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-content">
+                    <div class="breadcrumb">
+                        <a href="#">Dashboard</a>
+                        <span>›</span>
+                        <a href="#">Vehículos</a>
+                        <span>›</span>
+                        <span>Nuevo Ingreso</span>
+                    </div>
+                    <h1>Registrar Ingreso de Vehículo</h1>
+                    <p>Complete toda la información requerida para el registro del vehículo en el taller</p>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <div class="form-container">
+                    <div class="alert alert-info">
+                        <div class="alert-icon">ℹ️</div>
+                        <div class="alert-content">
+                            <div class="alert-title">Información Importante</div>
+                            <div class="alert-text">Todos los campos marcados con * son obligatorios. Las fotografías del vehículo son requeridas para completar el registro.</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Información del Vehículo -->
+                    <div class="form-card">
+                        <div class="card-header">
+                            <div class="card-icon">🚛</div>
+                            <div class="card-title">
+                                <h2>Información del Vehículo</h2>
+                                <p>Datos básicos del vehículo que ingresa al taller</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Patente <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-input" placeholder="BJFT-45" value="BJFT-45">
+                                <span class="form-hint">Formato: XXXX-XX</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Tipo de Vehículo <span class="required">*</span>
+                                </label>
+                                <select class="form-select">
+                                    <option>Camión</option>
+                                    <option>Camioneta</option>
+                                    <option>Furgón</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Marca <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-input" placeholder="Mercedes Benz" value="Mercedes Benz">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Modelo <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-input" placeholder="Actros 2651" value="Actros 2651">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Año <span class="required">*</span>
+                                </label>
+                                <input type="number" class="form-input" placeholder="2020" value="2020">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Kilometraje Actual <span class="required">*</span>
+                                </label>
+                                <input type="number" class="form-input" placeholder="125,450" value="125450">
+                                <span class="form-hint">Kilometraje al momento del ingreso</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detalles del Ingreso -->
+                    <div class="form-card">
+                        <div class="card-header">
+                            <div class="card-icon">📋</div>
+                            <div class="card-title">
+                                <h2>Detalles del Ingreso</h2>
+                                <p>Información sobre el ingreso al taller</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Chofer Responsable <span class="required">*</span>
+                                </label>
+                                <select class="form-select">
+                                    <option value="">Seleccione un chofer</option>
+                                    <option selected>Juan Pérez Soto</option>
+                                    <option>María González López</option>
+                                    <option>Carlos Ramírez Díaz</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Guardia que Registra <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-input" value="Pedro Morales" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Fecha de Ingreso <span class="required">*</span>
+                                </label>
+                                <input type="date" class="form-input" value="2025-10-03">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Hora de Ingreso <span class="required">*</span>
+                                </label>
+                                <input type="time" class="form-input" value="14:30">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Motivo de Ingreso <span class="required">*</span>
+                                </label>
+                                <select class="form-select">
+                                    <option>Mantenimiento Preventivo</option>
+                                    <option selected>Mantenimiento Correctivo</option>
+                                    <option>Diagnóstico</option>
+                                    <option>Reparación</option>
+                                    <option>Revisión Técnica</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Prioridad <span class="required">*</span>
+                                </label>
+                                <select class="form-select">
+                                    <option>Baja</option>
+                                    <option selected>Media</option>
+                                    <option>Alta</option>
+                                    <option>Crítica</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label class="form-label">
+                                    Observaciones Iniciales <span class="required">*</span>
+                                </label>
+                                <textarea class="form-textarea" placeholder="Describa el estado del vehículo, problemas reportados, novedades, etc.">Vehículo presenta ruido en motor. Requiere revisión completa del sistema de frenos. Nivel de aceite bajo.</textarea>
+                                <span class="form-hint">Incluya toda la información relevante sobre el estado del vehículo</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Evidencias Fotográficas -->
+                    <div class="form-card">
+                        <div class="card-header">
+                            <div class="card-icon">📷</div>
+                            <div class="card-title">
+                                <h2>Evidencias Fotográficas</h2>
+                                <p>Capture fotos del vehículo desde diferentes ángulos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="photo-upload-grid">
+                            <div class="upload-box photo-preview">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23e2e8f0' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%2394a3b8'%3EFrontal%3C/text%3E%3C/svg%3E" alt="Frontal">
+                                <div class="photo-label">Vista Frontal</div>
+                                <div class="remove-photo">✕</div>
+                            </div>
+                            
+                            <div class="upload-box photo-preview">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23e2e8f0' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%2394a3b8'%3ETrasera%3C/text%3E%3C/svg%3E" alt="Trasera">
+                                <div class="photo-label">Vista Trasera</div>
+                                <div class="remove-photo">✕</div>
+                            </div>
+                            
+                            <div class="upload-box photo-preview">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23e2e8f0' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%2394a3b8'%3ELateral Izq.%3C/text%3E%3C/svg%3E" alt="Lateral">
+                                <div class="photo-label">Lateral Izquierda</div>
+                                <div class="remove-photo">✕</div>
+                            </div>
+                            
+                            <div class="upload-box">
+                                <div class="upload-icon">📷</div>
+                                <div class="upload-text">
+                                    Agregar Foto
+                                    <div class="upload-subtext">Lateral Derecha</div>
+                                </div>
+                            </div>
+                            
+                            <div class="upload-box">
+                                <div class="upload-icon">📷</div>
+                                <div class="upload-text">
+                                    Agregar Foto
+                                    <div class="upload-subtext">Daños o Detalles</div>
+                                </div>
+                            </div>
+                            
+                            <div class="upload-box">
+                                <div class="upload-icon">➕</div>
+                                <div class="upload-text">
+                                    Foto Adicional
+                                    <div class="upload-subtext">Opcional</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button class="btn btn-secondary">
+                            ← Cancelar
+                        </button>
+                        <button class="btn btn-secondary">
+                            💾 Guardar Borrador
+                        </button>
+                        <button class="btn btn-primary">
+                            Continuar →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
